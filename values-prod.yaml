@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 # Single-cluster Validated Pattern (no ACM, no Vault, no ESO).
-# Destination project is aiq-itay; create secret aiq-credentials there before sync.
+# Destination project is aiq-itay. make load-secrets writes Secret aiq-credentials.
 clusterGroup:
   name: prod
   namespaces:

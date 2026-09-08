@@ -25,10 +25,29 @@ CLI_MAAS_CONFIG = REPO_ROOT / "configs" / "config_maas_granite.yml"
 CHART_MAAS_CONFIG = REPO_ROOT / "charts" / "aiq-maas-config" / "files" / "config_maas_granite.yml"
 VALUES_PROD = REPO_ROOT / "values-prod.yaml"
 VALUES_GLOBAL = REPO_ROOT / "values-global.yaml"
+VALUES_SECRET_TEMPLATE = REPO_ROOT / "values-secret.yaml.template"
 
 
 def test_maas_config_chart_file_matches_cli_config():
     assert CLI_MAAS_CONFIG.read_text(encoding="utf-8") == CHART_MAAS_CONFIG.read_text(encoding="utf-8")
+
+
+def test_secret_template_targets_aiq_credentials_in_aiq_itay():
+    template = yaml.safe_load(VALUES_SECRET_TEMPLATE.read_text(encoding="utf-8"))
+    secret = template["secrets"][0]
+    field_names = [field["name"] for field in secret["fields"]]
+
+    assert template["version"] == "2.0"
+    assert secret["name"] == "aiq-credentials"
+    assert secret["targetNamespaces"] == ["aiq-itay"]
+    assert field_names == [
+        "DB_USER_NAME",
+        "DB_USER_PASSWORD",
+        "OPENAI_API_KEY",
+        "TAVILY_API_KEY",
+        "AIQ_INFERENCE_BASE_URL",
+        "MAAS_MODEL_NAME",
+    ]
 
 
 def test_pattern_values_target_umbrella_chart_and_aiq_itay():
@@ -36,7 +55,8 @@ def test_pattern_values_target_umbrella_chart_and_aiq_itay():
     values_prod = yaml.safe_load(VALUES_PROD.read_text(encoding="utf-8"))
 
     assert values_global["global"]["singleArgoCD"] is True
-    assert values_global["global"]["secretLoader"]["disabled"] is True
+    assert values_global["global"]["secretLoader"]["disabled"] is False
+    assert values_global["global"]["secretStore"]["backend"] == "none"
     assert values_global["main"]["clusterGroupName"] == "prod"
 
     applications = values_prod["clusterGroup"]["applications"]
