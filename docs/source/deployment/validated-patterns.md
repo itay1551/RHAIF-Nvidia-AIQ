@@ -7,7 +7,7 @@ SPDX-License-Identifier: Apache-2.0
 
 Deploy AI-Q on OpenShift through the [Validated Patterns](https://validatedpatterns.io/learn/) GitOps framework. Scaffolding was generated with [patternizer](https://validatedpatterns.io/learn/creating-patterns-with-patternizer/). This path is single-cluster only: no ACM hub/spoke and no HashiCorp Vault / External Secrets Operator. Secrets use the Validated Patterns `none` backend, which writes Kubernetes Secret `aiq-credentials` from a local file.
 
-The application Helm chart is unchanged. Pattern values point Argo CD at `deploy/helm/deployment-k8s` and apply `overrides/values-aiq-openshift.yaml` (MaaS Granite config mount, `gp3-csi` Postgres PVC, Ingress disabled). Use [Kubernetes (Helm)](./kubernetes.md) for a direct `helm install`.
+The application Helm chart is unchanged. Pattern values point Argo CD at `deploy/helm/deployment-k8s` and apply `overrides/values-aiq-openshift.yaml` (MaaS Granite config mount, Postgres PVC on the cluster default StorageClass, Ingress disabled). Use [Kubernetes (Helm)](./kubernetes.md) for a direct `helm install`.
 
 ## Prerequisites
 

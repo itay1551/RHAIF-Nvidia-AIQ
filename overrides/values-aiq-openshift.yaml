@@ -29,7 +29,6 @@ aiq:
           accessModes:
             - ReadWriteOnce
           size: 10Gi
-          storageClassName: gp3-csi
     frontend:
       ingress:
         enabled: false

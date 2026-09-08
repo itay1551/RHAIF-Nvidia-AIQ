@@ -89,5 +89,5 @@ def test_openshift_overlay_mounts_maas_config_and_disables_nginx_ingress():
     assert volume_names == {"postgres-init", "maas-config"}
     assert config_maps == {"aiq-postgres-init", "aiq-maas-config"}
     assert ingresses == []
-    assert pvcs["aiq-postgres-data"]["spec"]["storageClassName"] == "gp3-csi"
+    assert "storageClassName" not in pvcs["aiq-postgres-data"]["spec"]
     assert deployments["aiq-backend"]["metadata"]["namespace"] == "aiq-itay"
