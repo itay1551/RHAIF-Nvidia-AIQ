@@ -21,25 +21,26 @@ from tests.deploy.test_helm_deployment_k8s import render_chart
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 OVERLAY_PATH = REPO_ROOT / "overrides" / "values-aiq-openshift.yaml"
-CLI_MAAS_CONFIG = REPO_ROOT / "configs" / "config_maas_granite.yml"
 CHART_MAAS_CONFIG = REPO_ROOT / "charts" / "aiq-maas-config" / "files" / "config_maas_granite.yml"
 VALUES_PROD = REPO_ROOT / "values-prod.yaml"
 VALUES_GLOBAL = REPO_ROOT / "values-global.yaml"
 VALUES_SECRET_TEMPLATE = REPO_ROOT / "values-secret.yaml.template"
 
 
-def test_maas_config_chart_file_matches_cli_config():
-    assert CLI_MAAS_CONFIG.read_text(encoding="utf-8") == CHART_MAAS_CONFIG.read_text(encoding="utf-8")
+def test_maas_config_chart_file_is_valid_yaml():
+    assert CHART_MAAS_CONFIG.is_file()
+    config = yaml.safe_load(CHART_MAAS_CONFIG.read_text(encoding="utf-8"))
+    assert config["general"]["front_end"]["_type"] == "aiq_api"
 
 
-def test_secret_template_targets_aiq_credentials_in_aiq_itay():
+def test_secret_template_targets_aiq_credentials_in_aiq():
     template = yaml.safe_load(VALUES_SECRET_TEMPLATE.read_text(encoding="utf-8"))
     secret = template["secrets"][0]
     field_names = [field["name"] for field in secret["fields"]]
 
     assert template["version"] == "2.0"
     assert secret["name"] == "aiq-credentials"
-    assert secret["targetNamespaces"] == ["aiq-itay"]
+    assert secret["targetNamespaces"] == ["aiq"]
     assert field_names == [
         "DB_USER_NAME",
         "DB_USER_PASSWORD",
@@ -50,7 +51,7 @@ def test_secret_template_targets_aiq_credentials_in_aiq_itay():
     ]
 
 
-def test_pattern_values_target_umbrella_chart_and_aiq_itay():
+def test_pattern_values_target_umbrella_chart_and_aiq():
     values_global = yaml.safe_load(VALUES_GLOBAL.read_text(encoding="utf-8"))
     values_prod = yaml.safe_load(VALUES_PROD.read_text(encoding="utf-8"))
 
@@ -60,15 +61,15 @@ def test_pattern_values_target_umbrella_chart_and_aiq_itay():
     assert values_global["main"]["clusterGroupName"] == "prod"
 
     applications = values_prod["clusterGroup"]["applications"]
-    assert "aiq-itay" in values_prod["clusterGroup"]["namespaces"]
+    assert "aiq" in values_prod["clusterGroup"]["namespaces"]
     assert applications["aiq"]["path"] == "deploy/helm/deployment-k8s"
-    assert applications["aiq"]["namespace"] == "aiq-itay"
+    assert applications["aiq"]["namespace"] == "aiq"
     assert applications["aiq-maas-config"]["path"] == "charts/aiq-maas-config"
     assert "/overrides/values-aiq-openshift.yaml" in applications["aiq"]["extraValueFiles"]
 
 
 def test_openshift_overlay_mounts_maas_config_and_disables_nginx_ingress():
-    manifests = render_chart("-f", str(OVERLAY_PATH), namespace="aiq-itay")
+    manifests = render_chart("-f", str(OVERLAY_PATH), namespace="aiq")
     deployments = {
         manifest["metadata"]["name"]: manifest for manifest in manifests if manifest.get("kind") == "Deployment"
     }
@@ -90,4 +91,4 @@ def test_openshift_overlay_mounts_maas_config_and_disables_nginx_ingress():
     assert config_maps == {"aiq-postgres-init", "aiq-maas-config"}
     assert ingresses == []
     assert "storageClassName" not in pvcs["aiq-postgres-data"]["spec"]
-    assert deployments["aiq-backend"]["metadata"]["namespace"] == "aiq-itay"
+    assert deployments["aiq-backend"]["metadata"]["namespace"] == "aiq"

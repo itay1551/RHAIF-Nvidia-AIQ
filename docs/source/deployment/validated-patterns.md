@@ -16,7 +16,7 @@ The application Helm chart is unchanged. Pattern values point Argo CD at `deploy
 - A Git remote Argo CD can clone (typically your fork) and this branch pushed.
 - Local secret file `~/values-secret-aiq.yaml` (see below). `make install` loads it before waiting for Argo health.
 
-Default destination namespace in this repository is `aiq-itay`. Change `clusterGroup.namespaces`, each application's `namespace` in `values-prod.yaml`, and `targetNamespaces` in `values-secret.yaml.template` if you use a different project.
+Default destination namespace is `aiq`. Override `clusterGroup.namespaces`, each application's `namespace` in `values-prod.yaml`, and `targetNamespaces` in `values-secret.yaml.template` only if your cluster requires a different project name.
 
 ## Configure secrets
 
@@ -31,7 +31,7 @@ cp values-secret.yaml.template ~/values-secret-aiq.yaml
 
 `./pattern.sh make install` (and `./pattern.sh make load-secrets`) looks for that file before falling back to the in-repo template. Encrypt it with `ansible-vault encrypt ~/values-secret-aiq.yaml` if you want it encrypted at rest.
 
-`NVIDIA_API_KEY` is not required for the MaaS Granite profile (`configs/config_maas_granite.yml`). NGC images on this overlay are public enough for many clusters; add an image-pull secret if your cluster cannot pull `nvcr.io/nvidia/blueprint/*`.
+`NVIDIA_API_KEY` is not required for the MaaS Granite profile (`charts/aiq-maas-config/files/config_maas_granite.yml`). NGC images on this overlay are public enough for many clusters; add an image-pull secret if your cluster cannot pull `nvcr.io/nvidia/blueprint/*`.
 
 ## Install
 
@@ -45,15 +45,15 @@ From the repository root, on the branch Argo CD should track:
 ./pattern.sh make argo-healthcheck
 ```
 
-`make install` installs the Validated Patterns Operator, OpenShift GitOps, and a `Pattern` custom resource. It then loads `aiq-credentials` into `aiq-itay` (`global.secretStore.backend: none`). Argo CD syncs `aiq-maas-config` (workflow ConfigMap) and `aiq` (umbrella Helm chart).
+`make install` installs the Validated Patterns Operator, OpenShift GitOps, and a `Pattern` custom resource. It then loads `aiq-credentials` into `aiq` (`global.secretStore.backend: none`). Argo CD syncs `aiq-maas-config` (workflow ConfigMap) and `aiq` (umbrella Helm chart).
 
-Re-running `podman run ... quay.io/validatedpatterns/patternizer init` is idempotent. After it runs, keep `values-prod.yaml` pointed at `deploy/helm/deployment-k8s` and namespace `aiq-itay` — patternizer auto-discovers the child chart under `deploy/helm/helm-charts-k8s/aiq`, which does not include the web-profile values. Keep `secretStore.backend: none` and `secretLoader.disabled: false`.
+Re-running `podman run ... quay.io/validatedpatterns/patternizer init` is idempotent. After it runs, keep `values-prod.yaml` pointed at `deploy/helm/deployment-k8s` and namespace `aiq` — patternizer auto-discovers the child chart under `deploy/helm/helm-charts-k8s/aiq`, which does not include the web-profile values. Keep `secretStore.backend: none` and `secretLoader.disabled: false`.
 
 ## Validate
 
 ```bash
-oc get pods,pvc -n aiq-itay
-oc -n aiq-itay port-forward svc/aiq-backend 8000:8000
+oc get pods,pvc -n aiq
+oc -n aiq port-forward svc/aiq-backend 8000:8000
 # in another terminal:
 curl -sf http://127.0.0.1:8000/live && echo
 curl -sf http://127.0.0.1:8000/health && echo
@@ -61,4 +61,4 @@ curl -sf http://127.0.0.1:8000/health && echo
 
 Frontend Ingress is disabled on OpenShift (the chart defaults to `ingressClassName: nginx`). Port-forward `svc/aiq-frontend` on port 3000 if you need the UI.
 
-The NGC backend image does not contain `configs/config_maas_granite.yml`. GitOps mounts it from ConfigMap `aiq-maas-config`. Keep `charts/aiq-maas-config/files/config_maas_granite.yml` identical to `configs/config_maas_granite.yml`.
+The NGC backend image does not contain the MaaS Granite workflow YAML. GitOps mounts it from ConfigMap `aiq-maas-config`, sourced from `charts/aiq-maas-config/files/config_maas_granite.yml`.
