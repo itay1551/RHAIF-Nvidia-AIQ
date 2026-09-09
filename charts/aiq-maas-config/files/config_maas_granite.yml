@@ -1,14 +1,8 @@
 # OpenAI-compatible profile for Red Hat MaaS / LiteLLM Granite endpoints.
 #
-# Credentials and endpoint URL live in deploy/.env (gitignored):
-#   OPENAI_API_KEY
-#   AIQ_INFERENCE_BASE_URL
-#   MAAS_MODEL_NAME
-#
-# Run:
-#   source deploy/.env  # or let start scripts load it automatically
-#   ./scripts/start_cli.sh --config_file configs/config_maas_granite.yml
-#   ./scripts/start_as_skill.sh --config_file configs/config_maas_granite.yml
+# GitOps source for ConfigMap aiq-maas-config (Validated Patterns overlay).
+# Credentials and endpoint URL come from Secret aiq-credentials on the cluster:
+#   OPENAI_API_KEY, AIQ_INFERENCE_BASE_URL, MAAS_MODEL_NAME
 #
 # Experimental: granite-3-2-8b-instruct is smaller than the shipped Nemotron
 # profiles; deep research and tool-calling may be limited until validated.
