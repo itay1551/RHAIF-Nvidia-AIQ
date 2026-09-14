@@ -5,10 +5,10 @@ name: aiq
 pattern_version: "1.0"
 description: NVIDIA AI-Q research agent on OpenShift via Validated Patterns GitOps
 display_name: NVIDIA AI-Q
-repo_url: https://github.com/itay1551/RHAIF-Nvidia-AIQ
+repo_url: https://github.com/validatedpatterns-sandbox/RHAIF-Nvidia-AIQ
 docs_repo_url: https://github.com/validatedpatterns/docs
-issues_url: https://github.com/itay1551/RHAIF-Nvidia-AIQ/issues
-docs_url: https://github.com/itay1551/RHAIF-Nvidia-AIQ/blob/develop/docs/source/deployment/validated-patterns.md
+issues_url: https://github.com/validatedpatterns-sandbox/RHAIF-Nvidia-AIQ/issues
+docs_url: https://github.com/validatedpatterns-sandbox/RHAIF-Nvidia-AIQ/blob/main/docs/source/deployment/validated-patterns.md
 # ci_url: omit until Validated Patterns CI exists
 # can be sandbox, tested or maintained
 tier: sandbox
