@@ -74,6 +74,7 @@ def test_openshift_overlay_mounts_maas_config_and_disables_nginx_ingress():
         manifest["metadata"]["name"]: manifest for manifest in manifests if manifest.get("kind") == "Deployment"
     }
     ingresses = [manifest for manifest in manifests if manifest.get("kind") == "Ingress"]
+    routes = {manifest["metadata"]["name"]: manifest for manifest in manifests if manifest.get("kind") == "Route"}
     pvcs = {
         manifest["metadata"]["name"]: manifest
         for manifest in manifests
@@ -90,5 +91,17 @@ def test_openshift_overlay_mounts_maas_config_and_disables_nginx_ingress():
     assert volume_names == {"postgres-init", "maas-config"}
     assert config_maps == {"aiq-postgres-init", "aiq-maas-config"}
     assert ingresses == []
+    assert list(routes) == ["aiq-frontend"]
+    frontend_route = routes["aiq-frontend"]
+    assert frontend_route["apiVersion"] == "route.openshift.io/v1"
+    assert frontend_route["spec"]["to"] == {
+        "kind": "Service",
+        "name": "aiq-frontend",
+        "weight": 100,
+    }
+    assert frontend_route["spec"]["port"]["targetPort"] == 3000
+    assert "host" not in frontend_route["spec"]
+    assert frontend_route["spec"]["tls"]["termination"] == "edge"
+    assert frontend_route["spec"]["tls"]["insecureEdgeTerminationPolicy"] == "Redirect"
     assert "storageClassName" not in pvcs["aiq-postgres-data"]["spec"]
     assert deployments["aiq-backend"]["metadata"]["namespace"] == "aiq"

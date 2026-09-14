@@ -7,7 +7,7 @@ SPDX-License-Identifier: Apache-2.0
 
 Deploy AI-Q on OpenShift through the [Validated Patterns](https://validatedpatterns.io/learn/) GitOps framework. Scaffolding was generated with [patternizer](https://validatedpatterns.io/learn/creating-patterns-with-patternizer/). This path is single-cluster only: no ACM hub/spoke and no HashiCorp Vault / External Secrets Operator. Secrets use the Validated Patterns `none` backend, which writes Kubernetes Secret `aiq-credentials` from a local file.
 
-The application Helm chart is unchanged. Pattern values point Argo CD at `deploy/helm/deployment-k8s` and apply `overrides/values-aiq-openshift.yaml` (MaaS Granite config mount, Postgres PVC on the cluster default StorageClass, Ingress disabled). Use [Kubernetes (Helm)](./kubernetes.md) for a direct `helm install`.
+The application Helm chart is unchanged. Pattern values point Argo CD at `deploy/helm/deployment-k8s` and apply `overrides/values-aiq-openshift.yaml` (MaaS Granite config mount, Postgres PVC on the cluster default StorageClass, nginx Ingress disabled, frontend OpenShift Route enabled). Use [Kubernetes (Helm)](./kubernetes.md) for a direct `helm install`.
 
 ## Prerequisites
 
@@ -61,6 +61,6 @@ curl -sf http://127.0.0.1:8000/live && echo
 curl -sf http://127.0.0.1:8000/health && echo
 ```
 
-Frontend Ingress is disabled on OpenShift (the chart defaults to `ingressClassName: nginx`). Port-forward `svc/aiq-frontend` on port 3000 if you need the UI.
+Frontend Ingress is disabled on OpenShift (the chart defaults to `ingressClassName: nginx`). The overlay enables an OpenShift Route for `svc/aiq-frontend` on port 3000 instead; OpenShift assigns the hostname. Use `oc get route -n aiq` to find the UI URL.
 
 The NGC backend image does not contain the MaaS Granite workflow YAML. GitOps mounts it from ConfigMap `aiq-maas-config`, sourced from `charts/aiq-maas-config/files/config_maas_granite.yml`.

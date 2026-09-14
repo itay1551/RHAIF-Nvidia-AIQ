@@ -32,3 +32,5 @@ aiq:
     frontend:
       ingress:
         enabled: false
+      route:
+        enabled: true
