@@ -55,7 +55,7 @@ def test_pattern_values_target_umbrella_chart_and_aiq():
     values_global = yaml.safe_load(VALUES_GLOBAL.read_text(encoding="utf-8"))
     values_prod = yaml.safe_load(VALUES_PROD.read_text(encoding="utf-8"))
 
-    assert values_global["global"]["singleArgoCD"] is True
+    assert values_global["global"]["singleArgoCD"] is False
     assert values_global["global"]["secretLoader"]["disabled"] is False
     assert values_global["global"]["secretStore"]["backend"] == "none"
     assert values_global["main"]["clusterGroupName"] == "prod"
