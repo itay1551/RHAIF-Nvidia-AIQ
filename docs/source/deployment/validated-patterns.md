@@ -13,7 +13,7 @@ The application Helm chart is unchanged. Pattern values point Argo CD at `deploy
 
 - An OpenShift cluster and `oc` logged in with enough privilege to install operators.
 - [Podman](https://podman.io/) (the `./pattern.sh` wrapper runs make targets in the Validated Patterns utility container).
-- A Git remote Argo CD can clone (typically your fork) and this branch pushed.
+- A Git remote Argo CD can clone (for example `https://github.com/validatedpatterns-sandbox/RHAIF-Nvidia-AIQ`) and this branch pushed.
 - Local secret file `~/values-secret-aiq.yaml` (see below). `make install` loads it before waiting for Argo health.
 
 Default destination namespace is `aiq`. Override `clusterGroup.namespaces`, each application's `namespace` in `values-prod.yaml`, and `targetNamespaces` in `values-secret.yaml.template` only if your cluster requires a different project name.

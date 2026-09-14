@@ -219,7 +219,7 @@ Argo CD syncs two applications into namespace `aiq`:
 
 ## Deploying the demo
 
-To run the demo, ensure Podman is running on your machine. Fork or clone this repository (`RHAIF-Nvidia-AIQ`) and push the branch Argo CD should track (typically `develop`).
+To run the demo, ensure Podman is running on your machine. Clone this repository and push the branch Argo CD should track (typically `main`).
 
 ### Login to OpenShift cluster
 
@@ -232,7 +232,7 @@ oc login --token=<token> --server=<api_server_url>
 ### Cloning repository
 
 ```bash
-git clone https://github.com/<your-org>/RHAIF-Nvidia-AIQ.git
+git clone https://github.com/validatedpatterns-sandbox/RHAIF-Nvidia-AIQ.git
 cd RHAIF-Nvidia-AIQ
 ```
 
@@ -347,7 +347,7 @@ The sections below cover local development, workflow configuration, and product 
 #### Clone the repository
 
 ```bash
-git clone https://github.com/<your-org>/RHAIF-Nvidia-AIQ.git && cd RHAIF-Nvidia-AIQ
+git clone https://github.com/validatedpatterns-sandbox/RHAIF-Nvidia-AIQ.git && cd RHAIF-Nvidia-AIQ
 ```
 
 #### Automated Setup
