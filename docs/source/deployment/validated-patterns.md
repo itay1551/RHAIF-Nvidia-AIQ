@@ -47,7 +47,7 @@ From the repository root, on the branch Argo CD should track:
 
 `make install` installs the Validated Patterns Operator, OpenShift GitOps, and a `Pattern` custom resource. It then loads `aiq-credentials` into `aiq` (`global.secretStore.backend: none`). Argo CD syncs `aiq-maas-config` (workflow ConfigMap) and `aiq` (umbrella Helm chart).
 
-`values-global.yaml` sets `global.singleArgoCD: false` so `make install` provisions OpenShift GitOps on clusters that do not already run Argo CD. Set it to `true` only when reusing an existing Argo CD control plane.
+`make install` always provisions OpenShift GitOps (`vp-gitops`) when it is missing. `values-global.yaml` sets `global.singleArgoCD: true` so clustergroup Applications are created in that instance instead of a second Argo CD in `aiq-prod`.
 
 Re-running `podman run ... quay.io/validatedpatterns/patternizer init` is idempotent. After it runs, keep `values-prod.yaml` pointed at `deploy/helm/deployment-k8s` and namespace `aiq` — patternizer auto-discovers the child chart under `deploy/helm/helm-charts-k8s/aiq`, which does not include the web-profile values. Keep `secretStore.backend: none` and `secretLoader.disabled: false`.
 

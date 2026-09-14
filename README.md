@@ -118,9 +118,8 @@ From the repository root:
 ./pattern.sh make argo-healthcheck
 ```
 
-`make install` installs the Validated Patterns Operator and OpenShift GitOps (unless
-`global.singleArgoCD` is `true` to reuse an existing Argo CD), creates the `Pattern` resource, and
-loads `aiq-credentials`. Argo CD then syncs `aiq-maas-config` and `aiq`.
+`make install` installs the Validated Patterns Operator and OpenShift GitOps (`vp-gitops`), creates the `Pattern` resource, and
+loads `aiq-credentials`. `global.singleArgoCD: true` keeps clustergroup Applications in that Argo CD instance. Argo CD then syncs `aiq-maas-config` and `aiq`.
 
 ## Verify the installation
 
