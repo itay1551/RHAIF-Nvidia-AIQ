@@ -44,10 +44,8 @@ def test_secret_template_targets_aiq_credentials_in_aiq():
     assert field_names == [
         "DB_USER_NAME",
         "DB_USER_PASSWORD",
-        "OPENAI_API_KEY",
+        "NVIDIA_API_KEY",
         "TAVILY_API_KEY",
-        "AIQ_INFERENCE_BASE_URL",
-        "MAAS_MODEL_NAME",
     ]
 
 
